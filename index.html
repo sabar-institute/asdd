@@ -58,12 +58,12 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--txt);font-siz
   font-family:'Barlow','Arial Black',sans-serif;
   font-weight:700;font-size:clamp(30px,5vw,46px);
   letter-spacing:-1.5px;line-height:1.18;color:#e8e8e8;
-  overflow:hidden;white-space:nowrap;width:0;opacity:0;
+  overflow:hidden;white-space:nowrap;width:0;margin:0 auto;text-align:center;opacity:0;
   animation:tagShow .01s .9s forwards,tagType .75s steps(16,end) .9s forwards;
 }
 .sp-tag b{color:#B9BF1F;font-weight:inherit}
 @keyframes tagShow{to{opacity:1}}
-@keyframes tagType{to{width:18ch}}
+@keyframes tagType{from{width:0}to{width:18ch}}
 .sp-sub{
   font-family:'Barlow',Arial,sans-serif;font-size:12px;
   letter-spacing:.18em;text-transform:uppercase;color:#aaa;
@@ -179,12 +179,14 @@ select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(2
 
 #app{display:none}
 
+/* mobile select bar — hidden on desktop */
+.mobile-select-bar{display:none}
+
 @media(max-width:640px){
   header{
-    flex-wrap:wrap;
-    padding:6px 10px;
-    height:auto;
-    min-height:44px;
+    flex-wrap:nowrap;
+    padding:0 10px;
+    height:44px;
     gap:6px;
   }
   #map{height:calc(100dvh - 88px)!important}
@@ -192,14 +194,25 @@ select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(2
   .hdr-left svg{height:18px;flex-shrink:0}
   .hdr-left .title{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hdr-left .sub,.badge{display:none}
+  /* hide select inside header on mobile */
+  .controls select{display:none}
   .controls{flex-wrap:nowrap;flex:0 0 auto;gap:4px;align-items:center}
-  select{font-size:10px;min-width:0;width:140px;max-width:140px;padding:5px 28px 5px 8px}
-  .donate-btn{padding:4px 7px;font-size:10px;white-space:nowrap;flex-shrink:0}
+  .donate-btn{padding:4px 8px;font-size:10px;white-space:nowrap;flex-shrink:0;margin-left:0}
   .theme-btn{width:28px;height:28px;flex-shrink:0}
-}
-@media(max-width:360px){
-  select{width:110px;max-width:110px}
-  .donate-btn{display:none}
+  /* show the mobile select bar below header */
+  .mobile-select-bar{
+    display:flex;align-items:center;
+    height:44px;padding:0 10px;
+    background:var(--s1);border-bottom:1px solid var(--bdr);
+  }
+  .mobile-select-bar select{
+    background:var(--s2);color:var(--txt);border:1px solid var(--bdr);border-radius:5px;
+    padding:6px 30px 6px 10px;font-family:'Barlow',var(--font-sans);font-size:11px;font-weight:600;
+    appearance:none;cursor:pointer;width:100%;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 10px center;line-height:1.5;
+  }
+  .mobile-select-bar select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(240,192,64,.15)}
 }
 </style>
 </head>
@@ -329,6 +342,17 @@ select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(2
     <a class="donate-btn" href="https://donate.sabarinstitute.org/" target="_blank" rel="noopener">♥ Donate Us</a>
   </div>
 </header>
+<!-- mobile-only select bar -->
+<div class="mobile-select-bar">
+  <select id="mapTypeMobile">
+    <option value="deletion_pct">✔ Overall Deletion %</option>
+    <option value="female_intensity">Gender (Female Intensity)</option>
+    <option value="already_enrolled">Already Enrolled</option>
+    <option value="death">Death</option>
+    <option value="perm_shifted">Permanently Shifted</option>
+    <option value="untraceable">Untraceable / Absent</option>
+  </select>
+</div>
 <div id="map"></div>
 </div>
 
@@ -455,7 +479,7 @@ function setTiles(){
   tileLayer = L.tileLayer(isDark
     ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
     : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
-    {attribution:'© CartoDB © OSM',maxZoom:12,minZoom:6}).addTo(map);
+    {attribution:'© Sabar Institute',maxZoom:12,minZoom:6}).addTo(map);
   tileLayer.setZIndex(0);
 }
 
@@ -522,7 +546,14 @@ document.getElementById('themeBtn').onclick = () => {
   renderMap(document.getElementById('mapType').value);
 };
 
-document.getElementById('mapType').onchange = e => renderMap(e.target.value);
+document.getElementById('mapType').onchange = e => {
+  document.getElementById('mapTypeMobile').value = e.target.value;
+  renderMap(e.target.value);
+};
+document.getElementById('mapTypeMobile').onchange = e => {
+  document.getElementById('mapType').value = e.target.value;
+  renderMap(e.target.value);
+};
 </script>
 </body>
 </html>

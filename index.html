@@ -180,11 +180,26 @@ select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(2
 #app{display:none}
 
 @media(max-width:640px){
-  #map{height:calc(100dvh - 44px)!important}
-  header{padding:0 12px;height:44px}
+  header{
+    flex-wrap:wrap;
+    padding:6px 10px;
+    height:auto;
+    min-height:44px;
+    gap:6px;
+  }
+  #map{height:calc(100dvh - 88px)!important}
+  .hdr-left{min-width:0;flex:1 1 auto;overflow:hidden}
+  .hdr-left svg{height:18px;flex-shrink:0}
+  .hdr-left .title{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hdr-left .sub,.badge{display:none}
-  select{font-size:10px;min-width:150px;max-width:180px}
-  .donate-btn{padding:5px 8px;font-size:10px}
+  .controls{flex-wrap:nowrap;flex:0 0 auto;gap:4px;align-items:center}
+  select{font-size:10px;min-width:0;width:140px;max-width:140px;padding:5px 28px 5px 8px}
+  .donate-btn{padding:4px 7px;font-size:10px;white-space:nowrap;flex-shrink:0}
+  .theme-btn{width:28px;height:28px;flex-shrink:0}
+}
+@media(max-width:360px){
+  select{width:110px;max-width:110px}
+  .donate-btn{display:none}
 }
 </style>
 </head>
